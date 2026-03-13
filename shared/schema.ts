@@ -22,6 +22,7 @@ export const prospects = pgTable("prospects", {
   status: text("status").notNull().default("Bookmarked"),
   interestLevel: text("interest_level").notNull().default("Medium"),
   salary: text("salary"),
+  deadline: text("deadline"),
   notes: text("notes"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
@@ -42,6 +43,7 @@ export const insertProspectSchema = createInsertSchema(prospects).omit({
     .refine((v) => v == null || v === "" || v.trim().length > 0, {
       message: "Salary cannot be blank",
     }),
+  deadline: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
 });
 

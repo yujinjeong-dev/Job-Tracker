@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Prospect } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Trash2, Pencil, Flame, ThumbsUp, Minus, DollarSign } from "lucide-react";
+import { ExternalLink, Trash2, Pencil, Flame, ThumbsUp, Minus, DollarSign, CalendarClock } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +12,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { EditProspectForm } from "./edit-prospect-form";
+
+function getDeadlineCountdown(deadline: string | null | undefined): string | null {
+  if (!deadline) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const deadlineDate = new Date(deadline + "T00:00:00");
+  deadlineDate.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays < 0) return "Expired";
+  return `D-${diffDays}`;
+}
 
 function InterestIndicator({ level }: { level: string }) {
   switch (level) {
@@ -114,6 +125,24 @@ export function ProspectCard({ prospect }: { prospect: Prospect }) {
               {prospect.salary}
             </span>
           )}
+          {(() => {
+            const countdown = getDeadlineCountdown(prospect.deadline);
+            if (!countdown) return null;
+            const isExpired = countdown === "Expired";
+            return (
+              <span
+                className={`inline-flex items-center gap-1 text-xs font-medium ${
+                  isExpired
+                    ? "text-red-500 dark:text-red-400"
+                    : "text-amber-600 dark:text-amber-400"
+                }`}
+                data-testid={`text-deadline-${prospect.id}`}
+              >
+                <CalendarClock className="w-3 h-3" />
+                {countdown}
+              </span>
+            );
+          })()}
         </div>
 
         {prospect.jobUrl && (

@@ -37,6 +37,7 @@ export function AddProspectForm({ onSuccess }: { onSuccess?: () => void }) {
       status: "Bookmarked",
       interestLevel: "Medium",
       salary: "",
+      deadline: "",
       notes: "",
     },
   });
@@ -118,6 +119,25 @@ export function AddProspectForm({ onSuccess }: { onSuccess?: () => void }) {
                   {...field}
                   value={field.value ?? ""}
                   data-testid="input-salary"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="deadline"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Application Deadline (optional)</FormLabel>
+              <FormControl>
+                <Input
+                  type="date"
+                  {...field}
+                  value={field.value ?? ""}
+                  data-testid="input-deadline"
                 />
               </FormControl>
               <FormMessage />
