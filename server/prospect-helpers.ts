@@ -51,3 +51,22 @@ export function validateProspect(data: Record<string, unknown>): { valid: boolea
 export function isTerminalStatus(status: string): boolean {
   return status === "Rejected" || status === "Withdrawn" || status === "Offer";
 }
+
+export function getDeadlineCountdown(
+  deadline: string | null | undefined,
+  referenceDate?: Date
+): string | null {
+  if (!deadline) return null;
+
+  const today = referenceDate ? new Date(referenceDate) : new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const deadlineDate = new Date(deadline + "T00:00:00");
+  deadlineDate.setHours(0, 0, 0, 0);
+
+  const diffMs = deadlineDate.getTime() - today.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) return "Expired";
+  return `D-${diffDays}`;
+}
